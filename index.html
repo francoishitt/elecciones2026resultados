@@ -6,12 +6,8 @@
   <title>Dashboard Electoral de Loreto</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!--
-    CONTADOR DE VISITAS (GOATCOUNTER)
-    1) Crea una cuenta/sitio en GoatCounter
-    2) Reemplaza TU-CODIGO por tu código real
-    3) Activa en GoatCounter la opción para mostrar contador público
-  -->
+  <!-- CONTADOR DE VISITAS -->
+  <!-- Reemplaza TU-CODIGO por tu código real de GoatCounter -->
   <script data-goatcounter="https://TU-CODIGO.goatcounter.com/count"
           async src="//gc.zgo.at/count.js"></script>
 
@@ -292,46 +288,6 @@
       </div>
     </div>
 
-    <div class="card" style="margin-bottom:18px;">
-      <div class="section-title">
-        <h2>Consulta por partido político</h2>
-        <span class="badge">Regional · Provincial · Distrital</span>
-      </div>
-      <div class="controls" style="margin-bottom:14px;">
-        <div>
-          <label for="partidoSelect">Selecciona una agrupación</label>
-          <select id="partidoSelect" disabled>
-            <option value="">Seleccione</option>
-          </select>
-        </div>
-      </div>
-      <div class="layout" style="margin-bottom:0;">
-        <div class="card" style="box-shadow:none; border-radius:14px;">
-          <h2 style="margin-top:0;">Votos del partido por provincia</h2>
-          <canvas id="partidoProvinciaChart"></canvas>
-        </div>
-        <div class="card" style="box-shadow:none; border-radius:14px;">
-          <h2 style="margin-top:0;">Votos del partido por distrito</h2>
-          <canvas id="partidoDistritoChart"></canvas>
-        </div>
-      </div>
-      <div class="card" style="box-shadow:none; border-radius:14px; margin-top:16px;">
-        <h2 style="margin-top:0;">Resumen del partido seleccionado</h2>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Ámbito</th>
-                <th>Nombre</th>
-                <th>Votos</th>
-              </tr>
-            </thead>
-            <tbody id="tablaPartidoBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
     <div class="kpis">
       <div class="kpi"><small>Ámbito actual</small><strong id="kpiAmbito">-</strong></div>
       <div class="kpi"><small>Total votos</small><strong id="kpiVotos">-</strong></div>
@@ -378,6 +334,50 @@
         </div>
       </div>
     </div>
+
+    <!-- SECCIÓN MOVIDA AL FINAL -->
+    <div class="card" style="margin-top:18px;">
+      <div class="section-title">
+        <h2>Consulta por partido político</h2>
+        <span class="badge">Regional · Provincial · Distrital</span>
+      </div>
+
+      <div class="controls" style="margin-bottom:14px;">
+        <div>
+          <label for="partidoSelect">Selecciona una agrupación</label>
+          <select id="partidoSelect" disabled>
+            <option value="">Seleccione</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="layout" style="margin-bottom:0;">
+        <div class="card" style="box-shadow:none; border-radius:14px;">
+          <h2 style="margin-top:0;">Votos del partido por provincia</h2>
+          <canvas id="partidoProvinciaChart"></canvas>
+        </div>
+        <div class="card" style="box-shadow:none; border-radius:14px;">
+          <h2 style="margin-top:0;">Votos del partido por distrito</h2>
+          <canvas id="partidoDistritoChart"></canvas>
+        </div>
+      </div>
+
+      <div class="card" style="box-shadow:none; border-radius:14px; margin-top:16px;">
+        <h2 style="margin-top:0;">Resumen del partido seleccionado</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Ámbito</th>
+                <th>Nombre</th>
+                <th>Votos</th>
+              </tr>
+            </thead>
+            <tbody id="tablaPartidoBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -386,16 +386,19 @@
     const tipoSelect = document.getElementById('tipoSelect');
     const provinciaSelect = document.getElementById('provinciaSelect');
     const distritoSelect = document.getElementById('distritoSelect');
+    const partidoSelect = document.getElementById('partidoSelect');
+
     const tablaBody = document.getElementById('tablaBody');
+    const tablaPartidoBody = document.getElementById('tablaPartidoBody');
+
     const kpiAmbito = document.getElementById('kpiAmbito');
     const kpiVotos = document.getElementById('kpiVotos');
     const kpiAgrup = document.getElementById('kpiAgrup');
     const kpiGanador = document.getElementById('kpiGanador');
+
     const loadingBox = document.getElementById('loadingBox');
     const errorBox = document.getElementById('errorBox');
     const tableBadge = document.getElementById('tableBadge');
-    const partidoSelect = document.getElementById('partidoSelect');
-    const tablaPartidoBody = document.getElementById('tablaPartidoBody');
 
     let rankingChart = null;
     let pieChart = null;
@@ -426,7 +429,9 @@
 
     function poblarPartidos() {
       const data = getDataActual();
-      const partidos = [...new Set(data.map(x => String(x.agrupacion || '').trim()))].filter(Boolean).sort();
+      const partidos = [...new Set(data.map(x => String(x.agrupacion || '').trim()))]
+        .filter(Boolean)
+        .sort();
 
       partidoSelect.innerHTML = '<option value="">Seleccione</option>';
       partidos.forEach(p => {
@@ -439,7 +444,9 @@
 
     function poblarProvincias() {
       const data = getDataActual();
-      const provincias = [...new Set(data.map(x => x.provincia))].filter(Boolean).sort();
+      const provincias = [...new Set(data.map(x => x.provincia))]
+        .filter(Boolean)
+        .sort();
 
       provinciaSelect.innerHTML = '<option value="">Todas</option>';
       provincias.forEach(p => {
@@ -456,7 +463,9 @@
       const data = getDataActual();
       const provincia = provinciaSelect.value;
       const filtrado = provincia ? data.filter(x => x.provincia === provincia) : data;
-      const distritos = [...new Set(filtrado.map(x => x.distrito))].filter(Boolean).sort();
+      const distritos = [...new Set(filtrado.map(x => x.distrito))]
+        .filter(Boolean)
+        .sort();
 
       distritoSelect.innerHTML = '<option value="">Todos</option>';
       distritos.forEach(d => {
@@ -532,7 +541,10 @@
         type: 'bar',
         data: {
           labels,
-          datasets: [{ label: 'Votos', data: values }]
+          datasets: [{
+            label: 'Votos',
+            data: values
+          }]
         },
         options: {
           responsive: true,
@@ -545,7 +557,9 @@
         type: 'doughnut',
         data: {
           labels,
-          datasets: [{ data: values }]
+          datasets: [{
+            data: values
+          }]
         },
         options: {
           responsive: true,
@@ -563,7 +577,9 @@
 
       if (!partido) return;
 
-      const data = getDataActual().filter(x => String(x.agrupacion || '').trim() === partido);
+      const data = getDataActual().filter(
+        x => String(x.agrupacion || '').trim() === partido
+      );
 
       const totalRegional = data.reduce((acc, x) => acc + Number(x.votos || 0), 0);
 
@@ -572,7 +588,9 @@
           acc[row.provincia] = (acc[row.provincia] || 0) + Number(row.votos || 0);
           return acc;
         }, {})
-      ).map(([nombre, votos]) => ({ nombre, votos })).sort((a, b) => b.votos - a.votos);
+      )
+      .map(([nombre, votos]) => ({ nombre, votos }))
+      .sort((a, b) => b.votos - a.votos);
 
       const resumenDist = Object.entries(
         data.reduce((acc, row) => {
@@ -580,7 +598,9 @@
           acc[clave] = (acc[clave] || 0) + Number(row.votos || 0);
           return acc;
         }, {})
-      ).map(([nombre, votos]) => ({ nombre, votos })).sort((a, b) => b.votos - a.votos);
+      )
+      .map(([nombre, votos]) => ({ nombre, votos }))
+      .sort((a, b) => b.votos - a.votos);
 
       const filaRegional = document.createElement('tr');
       filaRegional.innerHTML = `<td>Región</td><td>Loreto</td><td>${totalRegional.toLocaleString('es-PE')}</td>`;
@@ -602,7 +622,10 @@
         type: 'bar',
         data: {
           labels: resumenProv.slice(0, 10).map(x => x.nombre),
-          datasets: [{ label: 'Votos', data: resumenProv.slice(0, 10).map(x => x.votos) }]
+          datasets: [{
+            label: 'Votos',
+            data: resumenProv.slice(0, 10).map(x => x.votos)
+          }]
         },
         options: {
           responsive: true,
@@ -615,7 +638,10 @@
         type: 'bar',
         data: {
           labels: resumenDist.slice(0, 10).map(x => x.nombre),
-          datasets: [{ label: 'Votos', data: resumenDist.slice(0, 10).map(x => x.votos) }]
+          datasets: [{
+            label: 'Votos',
+            data: resumenDist.slice(0, 10).map(x => x.votos)
+          }]
         },
         options: {
           responsive: true,
@@ -662,6 +688,7 @@
         poblarProvincias();
         render();
         habilitarControles();
+
         loadingBox.style.display = 'none';
         console.log('Datos cargados correctamente');
       } catch (err) {
@@ -671,6 +698,7 @@
     }
 
     tipoSelect.addEventListener('change', () => {
+      poblarPartidos();
       poblarProvincias();
       render();
     });
@@ -687,4 +715,3 @@
   </script>
 </body>
 </html>
-```
