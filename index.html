@@ -19,7 +19,6 @@
       --text: #0f172a;
       --muted: #64748b;
       --border: #e2e8f0;
-      --primary: #0f172a;
       --accent: #1d4ed8;
       --shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
       --radius: 18px;
@@ -246,8 +245,8 @@
 </head>
 <body>
   <header>
-    <h1>Dashboard Electoral de Loreto</h1>
-    <p>Visualización jerárquica tipo ONPE para Senado y Diputados, con filtros por provincia y distrito, ranking de agrupaciones y tabla resumen.</p>
+    <h1>Dashboard Electoral de Loreto - by Hitler Vasquez</h1>
+    <p>Visualización jerárquica tipo ONPE para Senado y Diputados, con filtros por provincia y distrito, ranking de agrupaciones y consulta específica por partido político.</p>
   </header>
 
   <div class="container">
@@ -335,7 +334,7 @@
       </div>
     </div>
 
-    <!-- SECCIÓN MOVIDA AL FINAL -->
+    <!-- CONSULTA INDEPENDIENTE -->
     <div class="card" style="margin-top:18px;">
       <div class="section-title">
         <h2>Consulta por partido político</h2>
@@ -343,6 +342,13 @@
       </div>
 
       <div class="controls" style="margin-bottom:14px;">
+        <div>
+          <label for="partidoTipoSelect">Elección de la consulta</label>
+          <select id="partidoTipoSelect" disabled>
+            <option value="senado">Senado</option>
+            <option value="diputados">Diputados</option>
+          </select>
+        </div>
         <div>
           <label for="partidoSelect">Selecciona una agrupación</label>
           <select id="partidoSelect" disabled>
@@ -386,6 +392,8 @@
     const tipoSelect = document.getElementById('tipoSelect');
     const provinciaSelect = document.getElementById('provinciaSelect');
     const distritoSelect = document.getElementById('distritoSelect');
+
+    const partidoTipoSelect = document.getElementById('partidoTipoSelect');
     const partidoSelect = document.getElementById('partidoSelect');
 
     const tablaBody = document.getElementById('tablaBody');
@@ -420,6 +428,7 @@
       tipoSelect.disabled = false;
       provinciaSelect.disabled = false;
       distritoSelect.disabled = false;
+      partidoTipoSelect.disabled = false;
       partidoSelect.disabled = false;
     }
 
@@ -427,19 +436,8 @@
       return dataStore[tipoSelect.value] || [];
     }
 
-    function poblarPartidos() {
-      const data = getDataActual();
-      const partidos = [...new Set(data.map(x => String(x.agrupacion || '').trim()))]
-        .filter(Boolean)
-        .sort();
-
-      partidoSelect.innerHTML = '<option value="">Seleccione</option>';
-      partidos.forEach(p => {
-        const opt = document.createElement('option');
-        opt.value = p;
-        opt.textContent = p;
-        partidoSelect.appendChild(opt);
-      });
+    function getDataConsultaPartido() {
+      return dataStore[partidoTipoSelect.value] || [];
     }
 
     function poblarProvincias() {
@@ -474,6 +472,27 @@
         opt.textContent = d;
         distritoSelect.appendChild(opt);
       });
+    }
+
+    function poblarPartidosIndependientes() {
+      const data = getDataConsultaPartido();
+      const partidos = [...new Set(data.map(x => String(x.agrupacion || '').trim()))]
+        .filter(Boolean)
+        .sort();
+
+      const partidoSeleccionadoActual = partidoSelect.value;
+      partidoSelect.innerHTML = '<option value="">Seleccione</option>';
+
+      partidos.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p;
+        opt.textContent = p;
+        partidoSelect.appendChild(opt);
+      });
+
+      if (partidos.includes(partidoSeleccionadoActual)) {
+        partidoSelect.value = partidoSeleccionadoActual;
+      }
     }
 
     function filtrarData() {
@@ -577,7 +596,7 @@
 
       if (!partido) return;
 
-      const data = getDataActual().filter(
+      const data = getDataConsultaPartido().filter(
         x => String(x.agrupacion || '').trim() === partido
       );
 
@@ -657,7 +676,6 @@
       actualizarKPIs(resumen);
       actualizarTabla(resumen);
       actualizarCharts(resumen);
-      actualizarVistaPartido();
     }
 
     async function cargarJsonSeguro(url) {
@@ -684,8 +702,8 @@
           throw new Error('Los JSON están vacíos o no tienen el formato esperado.');
         }
 
-        poblarPartidos();
         poblarProvincias();
+        poblarPartidosIndependientes();
         render();
         habilitarControles();
 
@@ -698,7 +716,6 @@
     }
 
     tipoSelect.addEventListener('change', () => {
-      poblarPartidos();
       poblarProvincias();
       render();
     });
@@ -709,6 +726,12 @@
     });
 
     distritoSelect.addEventListener('change', render);
+
+    partidoTipoSelect.addEventListener('change', () => {
+      poblarPartidosIndependientes();
+      actualizarVistaPartido();
+    });
+
     partidoSelect.addEventListener('change', actualizarVistaPartido);
 
     cargarDatos();
