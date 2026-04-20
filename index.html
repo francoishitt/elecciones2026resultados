@@ -3,159 +3,332 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard Electoral Loreto</title>
+  <title>Dashboard Electoral de Loreto</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!--
+    CONTADOR DE VISITAS (GOATCOUNTER)
+    1) Crea una cuenta/sitio en GoatCounter
+    2) Reemplaza TU-CODIGO por tu código real
+    3) Activa en GoatCounter la opción para mostrar contador público
+  -->
+  <script data-goatcounter="https://TU-CODIGO.goatcounter.com/count"
+          async src="//gc.zgo.at/count.js"></script>
+
   <style>
-    :root{
-      --bg:#f5f7fb;
-      --card:#ffffff;
-      --text:#1f2937;
-      --muted:#6b7280;
-      --border:#e5e7eb;
-      --dark:#0f172a;
+    :root {
+      --bg: #f3f6fb;
+      --surface: #ffffff;
+      --surface-2: #f8fafc;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --primary: #0f172a;
+      --accent: #1d4ed8;
+      --shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:Arial, sans-serif;
-      background:var(--bg);
-      color:var(--text);
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: linear-gradient(180deg, #eef4ff 0%, #f8fbff 100%);
+      color: var(--text);
     }
-    header{
-      background:var(--dark);
-      color:#fff;
-      padding:18px 24px;
+
+    header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: white;
+      padding: 26px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
     }
-    header h1{
-      margin:0;
-      font-size:1.5rem;
+
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
     }
-    header p{
-      margin:6px 0 0;
-      color:#cbd5e1;
+
+    header p {
+      margin: 8px 0 0;
+      color: #cbd5e1;
+      max-width: 900px;
+      line-height: 1.5;
     }
-    .container{
-      max-width:1300px;
-      margin:0 auto;
-      padding:20px;
+
+    .container {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 24px;
     }
-    .card{
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:12px;
-      padding:16px;
-      box-shadow:0 2px 6px rgba(0,0,0,.04);
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      margin-bottom: 18px;
+      align-items: stretch;
     }
-    .controls{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-      gap:16px;
-      margin-bottom:16px;
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
     }
-    label{
-      display:block;
-      font-weight:bold;
-      margin-bottom:6px;
+
+    .card h2 {
+      margin: 0 0 14px;
+      font-size: 1.08rem;
     }
-    select{
-      width:100%;
-      padding:10px;
-      border-radius:8px;
-      border:1px solid var(--border);
-      background:#fff;
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      align-items: end;
     }
-    .kpis{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-      gap:12px;
-      margin-bottom:16px;
+
+    label {
+      display: block;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 8px;
     }
-    .kpi{
-      background:#fff;
-      border:1px solid var(--border);
-      border-radius:12px;
-      padding:14px;
+
+    select {
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: white;
+      font-size: 0.96rem;
+      outline: none;
     }
-    .kpi small{
-      display:block;
-      color:var(--muted);
-      margin-bottom:4px;
+
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.12);
     }
-    .kpi strong{
-      font-size:1.2rem;
+
+    .visit-box {
+      min-width: 230px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 8px;
     }
-    .grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:16px;
+
+    .visit-box small {
+      color: var(--muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
-    .wide{
-      grid-column:1 / -1;
+
+    .visit-box strong {
+      font-size: 1.45rem;
     }
-    table{
-      width:100%;
-      border-collapse:collapse;
-      font-size:.95rem;
+
+    .visit-box .hint {
+      color: var(--muted);
+      font-size: 0.9rem;
     }
-    th,td{
-      padding:8px;
-      border-bottom:1px solid var(--border);
-      text-align:left;
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
     }
-    th{
-      background:#f8fafc;
+
+    .kpi {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
     }
-    .loading, .error{
-      margin:16px 0;
-      padding:12px 14px;
-      border-radius:10px;
-      font-weight:bold;
+
+    .kpi small {
+      display: block;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
-    .loading{
-      background:#eff6ff;
-      color:#1d4ed8;
-      border:1px solid #bfdbfe;
+
+    .kpi strong {
+      font-size: 1.35rem;
+      line-height: 1.2;
     }
-    .error{
-      background:#fef2f2;
-      color:#b91c1c;
-      border:1px solid #fecaca;
-      display:none;
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 16px;
+      margin-bottom: 16px;
     }
-    @media (max-width:900px){
-      .grid{grid-template-columns:1fr}
+
+    .layout-bottom {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--surface-2);
+      font-size: 0.92rem;
+    }
+
+    .loading, .error {
+      margin-bottom: 16px;
+      padding: 13px 14px;
+      border-radius: 14px;
+      font-weight: 700;
+    }
+
+    .loading {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+
+    .error {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+      display: none;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-weight: 700;
+      font-size: 0.84rem;
+    }
+
+    @media (max-width: 980px) {
+      .topbar { grid-template-columns: 1fr; }
+      .layout { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
   <header>
     <h1>Dashboard Electoral de Loreto</h1>
-    <p>Senado y Diputados por ámbito regional, provincial y distrital</p>
+    <p>Visualización jerárquica tipo ONPE para Senado y Diputados, con filtros por provincia y distrito, ranking de agrupaciones y tabla resumen.</p>
   </header>
 
   <div class="container">
-    <div id="loadingBox" class="loading">Cargando datos...</div>
+    <div id="loadingBox" class="loading">Cargando datos del dashboard...</div>
     <div id="errorBox" class="error"></div>
 
-    <div class="controls card">
-      <div>
-        <label for="tipoSelect">Elección</label>
-        <select id="tipoSelect" disabled>
-          <option value="senado">Senado</option>
-          <option value="diputados">Diputados</option>
-        </select>
+    <div class="topbar">
+      <div class="card">
+        <div class="controls">
+          <div>
+            <label for="tipoSelect">Elección</label>
+            <select id="tipoSelect" disabled>
+              <option value="senado">Senado</option>
+              <option value="diputados">Diputados</option>
+            </select>
+          </div>
+          <div>
+            <label for="provinciaSelect">Provincia</label>
+            <select id="provinciaSelect" disabled>
+              <option value="">Todas</option>
+            </select>
+          </div>
+          <div>
+            <label for="distritoSelect">Distrito</label>
+            <select id="distritoSelect" disabled>
+              <option value="">Todos</option>
+            </select>
+          </div>
+        </div>
       </div>
-      <div>
-        <label for="provinciaSelect">Provincia</label>
-        <select id="provinciaSelect" disabled>
-          <option value="">Todas</option>
-        </select>
+
+      <div class="card visit-box">
+        <small>Uso del dashboard</small>
+        <strong>
+          <span id="gcvc-publicar"><span class="gcvc-page">0</span> visitas</span>
+        </strong>
+        <div class="hint">Requiere activar el contador público en GoatCounter.</div>
       </div>
-      <div>
-        <label for="distritoSelect">Distrito</label>
-        <select id="distritoSelect" disabled>
-          <option value="">Todos</option>
-        </select>
+    </div>
+
+    <div class="card" style="margin-bottom:18px;">
+      <div class="section-title">
+        <h2>Consulta por partido político</h2>
+        <span class="badge">Regional · Provincial · Distrital</span>
+      </div>
+      <div class="controls" style="margin-bottom:14px;">
+        <div>
+          <label for="partidoSelect">Selecciona una agrupación</label>
+          <select id="partidoSelect" disabled>
+            <option value="">Seleccione</option>
+          </select>
+        </div>
+      </div>
+      <div class="layout" style="margin-bottom:0;">
+        <div class="card" style="box-shadow:none; border-radius:14px;">
+          <h2 style="margin-top:0;">Votos del partido por provincia</h2>
+          <canvas id="partidoProvinciaChart"></canvas>
+        </div>
+        <div class="card" style="box-shadow:none; border-radius:14px;">
+          <h2 style="margin-top:0;">Votos del partido por distrito</h2>
+          <canvas id="partidoDistritoChart"></canvas>
+        </div>
+      </div>
+      <div class="card" style="box-shadow:none; border-radius:14px; margin-top:16px;">
+        <h2 style="margin-top:0;">Resumen del partido seleccionado</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Ámbito</th>
+                <th>Nombre</th>
+                <th>Votos</th>
+              </tr>
+            </thead>
+            <tbody id="tablaPartidoBody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -166,71 +339,102 @@
       <div class="kpi"><small>Ganador</small><strong id="kpiGanador">-</strong></div>
     </div>
 
-    <div class="grid">
+    <div class="layout">
       <div class="card">
-        <h2>Ranking de agrupaciones</h2>
+        <div class="section-title">
+          <h2>Ranking de agrupaciones</h2>
+          <span class="badge">Top 10</span>
+        </div>
         <canvas id="rankingChart"></canvas>
       </div>
+
       <div class="card">
-        <h2>Participación relativa</h2>
+        <div class="section-title">
+          <h2>Participación relativa</h2>
+          <span class="badge">Top 10</span>
+        </div>
         <canvas id="pieChart"></canvas>
       </div>
-      <div class="card wide">
-        <h2>Tabla resumen</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Agrupación</th>
-              <th>Votos</th>
-              <th>%</th>
-            </tr>
-          </thead>
-          <tbody id="tablaBody"></tbody>
-        </table>
+    </div>
+
+    <div class="layout-bottom">
+      <div class="card">
+        <div class="section-title">
+          <h2>Tabla resumen</h2>
+          <span class="badge" id="tableBadge">Detalle actual</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Agrupación</th>
+                <th>Votos</th>
+                <th>%</th>
+              </tr>
+            </thead>
+            <tbody id="tablaBody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
-    let dataStore = {
-      senado: [],
-      diputados: []
-    };
+    let dataStore = { senado: [], diputados: [] };
 
-    const tipoSelect = document.getElementById("tipoSelect");
-    const provinciaSelect = document.getElementById("provinciaSelect");
-    const distritoSelect = document.getElementById("distritoSelect");
-    const tablaBody = document.getElementById("tablaBody");
-    const kpiAmbito = document.getElementById("kpiAmbito");
-    const kpiVotos = document.getElementById("kpiVotos");
-    const kpiAgrup = document.getElementById("kpiAgrup");
-    const kpiGanador = document.getElementById("kpiGanador");
-    const loadingBox = document.getElementById("loadingBox");
-    const errorBox = document.getElementById("errorBox");
+    const tipoSelect = document.getElementById('tipoSelect');
+    const provinciaSelect = document.getElementById('provinciaSelect');
+    const distritoSelect = document.getElementById('distritoSelect');
+    const tablaBody = document.getElementById('tablaBody');
+    const kpiAmbito = document.getElementById('kpiAmbito');
+    const kpiVotos = document.getElementById('kpiVotos');
+    const kpiAgrup = document.getElementById('kpiAgrup');
+    const kpiGanador = document.getElementById('kpiGanador');
+    const loadingBox = document.getElementById('loadingBox');
+    const errorBox = document.getElementById('errorBox');
+    const tableBadge = document.getElementById('tableBadge');
+    const partidoSelect = document.getElementById('partidoSelect');
+    const tablaPartidoBody = document.getElementById('tablaPartidoBody');
 
     let rankingChart = null;
     let pieChart = null;
+    let partidoProvinciaChart = null;
+    let partidoDistritoChart = null;
 
     function mostrarError(msg) {
-      errorBox.style.display = "block";
+      errorBox.style.display = 'block';
       errorBox.textContent = msg;
-      loadingBox.style.display = "none";
+      loadingBox.style.display = 'none';
     }
 
     function ocultarError() {
-      errorBox.style.display = "none";
-      errorBox.textContent = "";
+      errorBox.style.display = 'none';
+      errorBox.textContent = '';
     }
 
     function habilitarControles() {
       tipoSelect.disabled = false;
       provinciaSelect.disabled = false;
       distritoSelect.disabled = false;
+      partidoSelect.disabled = false;
     }
 
     function getDataActual() {
       return dataStore[tipoSelect.value] || [];
+    }
+
+    function poblarPartidos() {
+      const data = getDataActual();
+      const partidos = [...new Set(data.map(x => String(x.agrupacion || '').trim()))].filter(Boolean).sort();
+
+      partidoSelect.innerHTML = '<option value="">Seleccione</option>';
+      partidos.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p;
+        opt.textContent = p;
+        partidoSelect.appendChild(opt);
+      });
     }
 
     function poblarProvincias() {
@@ -239,7 +443,7 @@
 
       provinciaSelect.innerHTML = '<option value="">Todas</option>';
       provincias.forEach(p => {
-        const opt = document.createElement("option");
+        const opt = document.createElement('option');
         opt.value = p;
         opt.textContent = p;
         provinciaSelect.appendChild(opt);
@@ -251,13 +455,12 @@
     function poblarDistritos() {
       const data = getDataActual();
       const provincia = provinciaSelect.value;
-
       const filtrado = provincia ? data.filter(x => x.provincia === provincia) : data;
       const distritos = [...new Set(filtrado.map(x => x.distrito))].filter(Boolean).sort();
 
       distritoSelect.innerHTML = '<option value="">Todos</option>';
       distritos.forEach(d => {
-        const opt = document.createElement("option");
+        const opt = document.createElement('option');
         opt.value = d;
         opt.textContent = d;
         distritoSelect.appendChild(opt);
@@ -274,7 +477,7 @@
     function resumirPorAgrupacion(data) {
       const resumen = {};
       data.forEach(row => {
-        const agrup = String(row.agrupacion || "").trim();
+        const agrup = String(row.agrupacion || '').trim();
         const votos = Number(row.votos || 0);
         if (!agrup) return;
         resumen[agrup] = (resumen[agrup] || 0) + votos;
@@ -287,29 +490,30 @@
 
     function actualizarKPIs(resumen) {
       const total = resumen.reduce((acc, x) => acc + x.votos, 0);
-      const ganador = resumen.length ? resumen[0].agrupacion : "-";
+      const ganador = resumen.length ? resumen[0].agrupacion : '-';
 
-      let ambito = "Loreto";
+      let ambito = 'Loreto';
       if (provinciaSelect.value) ambito = provinciaSelect.value;
       if (distritoSelect.value) ambito = distritoSelect.value;
 
       kpiAmbito.textContent = ambito;
-      kpiVotos.textContent = total.toLocaleString("es-PE");
-      kpiAgrup.textContent = resumen.length.toLocaleString("es-PE");
+      kpiVotos.textContent = total.toLocaleString('es-PE');
+      kpiAgrup.textContent = resumen.length.toLocaleString('es-PE');
       kpiGanador.textContent = ganador;
+      tableBadge.textContent = ambito;
     }
 
     function actualizarTabla(resumen) {
       const total = resumen.reduce((acc, x) => acc + x.votos, 0);
-      tablaBody.innerHTML = "";
+      tablaBody.innerHTML = '';
 
       resumen.forEach((row, idx) => {
-        const tr = document.createElement("tr");
-        const pct = total ? ((row.votos / total) * 100).toFixed(2) : "0.00";
+        const tr = document.createElement('tr');
+        const pct = total ? ((row.votos / total) * 100).toFixed(2) : '0.00';
         tr.innerHTML = `
           <td>${idx + 1}</td>
           <td>${row.agrupacion}</td>
-          <td>${row.votos.toLocaleString("es-PE")}</td>
+          <td>${row.votos.toLocaleString('es-PE')}</td>
           <td>${pct}%</td>
         `;
         tablaBody.appendChild(tr);
@@ -324,39 +528,99 @@
       if (rankingChart) rankingChart.destroy();
       if (pieChart) pieChart.destroy();
 
-      rankingChart = new Chart(document.getElementById("rankingChart"), {
-        type: "bar",
+      rankingChart = new Chart(document.getElementById('rankingChart'), {
+        type: 'bar',
         data: {
           labels,
-          datasets: [{
-            label: "Votos",
-            data: values
-          }]
+          datasets: [{ label: 'Votos', data: values }]
         },
         options: {
           responsive: true,
-          plugins: {
-            legend: { display: false }
-          },
-          scales: {
-            y: { beginAtZero: true }
-          }
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true } }
         }
       });
 
-      pieChart = new Chart(document.getElementById("pieChart"), {
-        type: "pie",
+      pieChart = new Chart(document.getElementById('pieChart'), {
+        type: 'doughnut',
         data: {
           labels,
-          datasets: [{
-            data: values
-          }]
+          datasets: [{ data: values }]
         },
         options: {
           responsive: true,
-          plugins: {
-            legend: { position: "bottom" }
-          }
+          plugins: { legend: { position: 'bottom' } }
+        }
+      });
+    }
+
+    function actualizarVistaPartido() {
+      const partido = partidoSelect.value;
+      tablaPartidoBody.innerHTML = '';
+
+      if (partidoProvinciaChart) partidoProvinciaChart.destroy();
+      if (partidoDistritoChart) partidoDistritoChart.destroy();
+
+      if (!partido) return;
+
+      const data = getDataActual().filter(x => String(x.agrupacion || '').trim() === partido);
+
+      const totalRegional = data.reduce((acc, x) => acc + Number(x.votos || 0), 0);
+
+      const resumenProv = Object.entries(
+        data.reduce((acc, row) => {
+          acc[row.provincia] = (acc[row.provincia] || 0) + Number(row.votos || 0);
+          return acc;
+        }, {})
+      ).map(([nombre, votos]) => ({ nombre, votos })).sort((a, b) => b.votos - a.votos);
+
+      const resumenDist = Object.entries(
+        data.reduce((acc, row) => {
+          const clave = `${row.provincia} / ${row.distrito}`;
+          acc[clave] = (acc[clave] || 0) + Number(row.votos || 0);
+          return acc;
+        }, {})
+      ).map(([nombre, votos]) => ({ nombre, votos })).sort((a, b) => b.votos - a.votos);
+
+      const filaRegional = document.createElement('tr');
+      filaRegional.innerHTML = `<td>Región</td><td>Loreto</td><td>${totalRegional.toLocaleString('es-PE')}</td>`;
+      tablaPartidoBody.appendChild(filaRegional);
+
+      resumenProv.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>Provincia</td><td>${item.nombre}</td><td>${item.votos.toLocaleString('es-PE')}</td>`;
+        tablaPartidoBody.appendChild(tr);
+      });
+
+      resumenDist.slice(0, 20).forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>Distrito</td><td>${item.nombre}</td><td>${item.votos.toLocaleString('es-PE')}</td>`;
+        tablaPartidoBody.appendChild(tr);
+      });
+
+      partidoProvinciaChart = new Chart(document.getElementById('partidoProvinciaChart'), {
+        type: 'bar',
+        data: {
+          labels: resumenProv.slice(0, 10).map(x => x.nombre),
+          datasets: [{ label: 'Votos', data: resumenProv.slice(0, 10).map(x => x.votos) }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+
+      partidoDistritoChart = new Chart(document.getElementById('partidoDistritoChart'), {
+        type: 'bar',
+        data: {
+          labels: resumenDist.slice(0, 10).map(x => x.nombre),
+          datasets: [{ label: 'Votos', data: resumenDist.slice(0, 10).map(x => x.votos) }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true } }
         }
       });
     }
@@ -364,65 +628,63 @@
     function render() {
       const data = filtrarData();
       const resumen = resumirPorAgrupacion(data);
-
       actualizarKPIs(resumen);
       actualizarTabla(resumen);
       actualizarCharts(resumen);
+      actualizarVistaPartido();
     }
 
     async function cargarJsonSeguro(url) {
-      const res = await fetch(url, { cache: "no-store" });
-      if (!res.ok) {
-        throw new Error(`No se pudo cargar ${url} (HTTP ${res.status})`);
-      }
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`No se pudo cargar ${url} (HTTP ${res.status})`);
       return await res.json();
     }
 
     async function cargarDatos() {
       try {
         ocultarError();
-        loadingBox.style.display = "block";
-        loadingBox.textContent = "Cargando datos...";
+        loadingBox.style.display = 'block';
+        loadingBox.textContent = 'Cargando datos del dashboard...';
 
         const [senadoData, diputadosData] = await Promise.all([
-          cargarJsonSeguro("senado_dashboard.json"),
-          cargarJsonSeguro("diputados_dashboard.json")
+          cargarJsonSeguro('senado_dashboard.json'),
+          cargarJsonSeguro('diputados_dashboard.json')
         ]);
 
         dataStore.senado = Array.isArray(senadoData) ? senadoData : [];
         dataStore.diputados = Array.isArray(diputadosData) ? diputadosData : [];
 
         if (!dataStore.senado.length && !dataStore.diputados.length) {
-          throw new Error("Los JSON están vacíos o no tienen el formato esperado.");
+          throw new Error('Los JSON están vacíos o no tienen el formato esperado.');
         }
 
+        poblarPartidos();
         poblarProvincias();
         render();
         habilitarControles();
-
-        loadingBox.style.display = "none";
-        console.log("Datos cargados correctamente");
+        loadingBox.style.display = 'none';
+        console.log('Datos cargados correctamente');
       } catch (err) {
         console.error(err);
-        mostrarError(
-          "No se pudieron cargar los archivos JSON. Verifica que 'senado_dashboard.json' y 'diputados_dashboard.json' estén en la misma carpeta que index.html y que GitHub Pages esté activado."
-        );
+        mostrarError('No se pudieron cargar los archivos JSON. Verifica que index.html, senado_dashboard.json y diputados_dashboard.json estén en la misma carpeta del repositorio publicado en GitHub Pages.');
       }
     }
 
-    tipoSelect.addEventListener("change", () => {
+    tipoSelect.addEventListener('change', () => {
       poblarProvincias();
       render();
     });
 
-    provinciaSelect.addEventListener("change", () => {
+    provinciaSelect.addEventListener('change', () => {
       poblarDistritos();
       render();
     });
 
-    distritoSelect.addEventListener("change", render);
+    distritoSelect.addEventListener('change', render);
+    partidoSelect.addEventListener('change', actualizarVistaPartido);
 
     cargarDatos();
   </script>
 </body>
 </html>
+```
